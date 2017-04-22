@@ -10,7 +10,11 @@ public enum InputType{
 public class InputManager : MonoBehaviour {
 
 	public InputType inputType;
-	public GameObject selectedObject;
+	public GameManager gameManager;
+
+	void Start(){
+		gameManager = GameObject.FindObjectOfType<GameManager> ();
+	}
 
 	void Update () {
 		if (inputType == InputType.mouse) {
@@ -39,20 +43,20 @@ public class InputManager : MonoBehaviour {
 	}
 
 	void SelectObject (GameObject obj){
-		if (this.selectedObject != null) {
-			if (obj == this.selectedObject) {
+
+		for (int i = 0; i < gameManager.selectedObjects.Count; i++) {
+			if (obj == gameManager.selectedObjects[i]) {
 				return;
 			}
 			ClearSelectedObject ();
 		}
 
-		selectedObject = obj;
+		gameManager.setSelectedObject(obj);
 	}
 
 	void ClearSelectedObject(){
-		if (selectedObject == null) {
-			return;
+		if (gameManager.selectedObjects.Count > 0) {
+			gameManager.clearSelectedObjects();
 		}
-		selectedObject = null;
 	}
 }

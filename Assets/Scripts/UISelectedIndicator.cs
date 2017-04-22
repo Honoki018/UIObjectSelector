@@ -8,21 +8,20 @@ public class UISelectedIndicator : MonoBehaviour {
 	[Range(1.0f, 2.0f)]
 	public float padding = 1.0f;
 
-	InputManager inputManager;
-
-	void Start(){
-		inputManager = GameObject.FindObjectOfType<InputManager> ();
-		Debug.Log (inputManager.name);
-	}
+	GameObject target;
 
 	void Update(){
-		if (inputManager.selectedObject == null) {
-			for (int i = 0; i < this.transform.childCount; i++) {
-				this.transform.GetChild (i).gameObject.SetActive (false);
-			}
-			return;
-		}
-		SelectObject (inputManager.selectedObject);
+//		if (target == null) {
+//			for (int i = 0; i < this.transform.childCount; i++) {
+//				this.transform.GetChild (i).gameObject.SetActive (false);
+//			}
+//			return;
+//		}
+		SelectObject (target);
+	}
+
+	public void setTarget(GameObject obj){
+		this.target = obj;
 	}
 
 	public void SelectObject (GameObject obj){
