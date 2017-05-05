@@ -1,62 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
+using System;
 public enum InputType{
-	mouse,
-	touch
+	inputPC,
+	inputMobile
 }
 
 public class InputManager : MonoBehaviour {
 
+	private GameManager gameManager;
+	public LayerMask SelectableLayers;		//create the layers in the inspector and select the selectable layers here.
 	public InputType inputType;
-	public GameManager gameManager;
 
 	void Start(){
 		gameManager = GameObject.FindObjectOfType<GameManager> ();
 	}
 
 	void Update () {
-		if (inputType == InputType.mouse) {
-			SelectObjectByMouse ();
-		} else if (inputType == InputType.touch) {
+		if (inputType == InputType.inputPC) {
+			ComputerInputs ();
+		} else if (inputType == InputType.inputMobile) {
 		
 		}
 	}
 
-	void SelectObjectByMouse(){
-		if (Input.GetMouseButtonDown (0)) {
-			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-			RaycastHit hitInfo;
+	void ComputerInputs(){
+		if(Input.GetKey(KeyCode.LeftShift)){
+			if(Input.GetMouseButtonDown(0)){
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+				this.gameManager.selectAnotherObject(this.getSelectableObjectFromInputRay(ray));
+			} else if (Input.GetMouseButtonDown(1)){
 
-			if (Physics.Raycast (ray, out hitInfo)) {
-				/*it is adviced to create a base object for a model
-				where the actual model would be in.
-				this will provide a more managable object for you.*/
-				//this gets the gameobject where the collider is
-				GameObject hitObject = hitInfo.transform.root.gameObject;
-				SelectObject (hitObject);
-			} else {
-				ClearSelectedObject ();
+			}
+		} else {
+			if(Input.GetMouseButtonDown(0)){
+				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+				this.gameManager.selectObject(this.getSelectableObjectFromInputRay(ray));
+			} else if (Input.GetMouseButtonDown(1)){
+
 			}
 		}
 	}
 
-	void SelectObject (GameObject obj){
+	GameObject getSelectableObjectFromInputRay(Ray ray){
+		GameObject result = null;
 
-		for (int i = 0; i < gameManager.selectedObjects.Count; i++) {
-			if (obj == gameManager.selectedObjects[i]) {
-				return;
-			}
-			ClearSelectedObject ();
+		RaycastHit hitInfo;
+		if(Physics.Raycast (ray, out hitInfo, 100, this.SelectableLayers.value)){
+			result = hitInfo.transform.root.gameObject;
 		}
 
-		gameManager.setSelectedObject(obj);
-	}
-
-	void ClearSelectedObject(){
-		if (gameManager.selectedObjects.Count > 0) {
-			gameManager.clearSelectedObjects();
-		}
+		return result;
 	}
 }
